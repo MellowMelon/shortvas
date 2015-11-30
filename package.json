@@ -26,6 +26,6 @@
   },
   "scripts": {
     "test": "mocha || true",
-    "check": "eslint -c .eslintrc *.js test/*.js || true"
+    "check": "eslint -c .eslintrc *.js lib/*.js test/*.js || true"
   }
 }

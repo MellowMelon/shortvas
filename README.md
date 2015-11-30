@@ -5,10 +5,8 @@ interfaces, and chaining in an attempt to make it easier to do common Canvas
 tasks with less typing. Compatibility with the original Canvas properties and
 methods is preserved to make introducing the module easier.
 
-shortvas is not intended to implement a bunch of utility methods. The only
-substantial addition shortvas provides is `getTransform`, a method for
-retrieving the current transformation of the Canvas, just because the hardest
-thing about implementing it is having some kind of wrapper in place.
+The only real extra feature provided over a standard context is an
+implementation of `getTransform`. The rest is for convenience.
 
 # Example
 
@@ -76,21 +74,118 @@ also more consistent with how a Canvas's `getContext` works.
 were given due consideration. Fortunately a working Canvas gives us a baseline
 for browser support.)
 
+### Aliases
+
+The following aliases of existing Canvas properties and methods exist on
+ShortvasContext:
+- save: push, s
+- restore: pop, r
+- transform: addT
+- setTransform: setT
+- resetTransform: resetT
+- beginPath: bp
+
 ### ShortvasContext#context
 
-The underlying Canvas context, if somehow you need it. Using it in place of the
-`ShortvasContext` should normally Just Work, but beware of doing transforms
-through the context directly if you intend to use `getTransform`.
+The underlying Canvas context, which may be useful if you need to use features
+not implemented/proxied by Shortvas. Using it in place of the `ShortvasContext`
+should normally Just Work, but beware of doing transforms through the context
+directly if you intend to use `getTransform`.
+
+### ShortvasContext#width
+
+Equivalent to `context.canvas.width` on the underlying context, and can be
+assigned to like oher proxied properties.
+
+### ShortvasContext#height
+
+Equivalent to `context.canvas.height` on the underlying context, and can be
+assigned to like oher proxied properties.
+
+### ShortvasContext#getTransform() -> Array
+
+Returns an array `[a, b, c, d, e, f]` representing the current transformation
+matrix with the same format as the arguments one would pass to
+`Context#transform`. The implied 3 by 3 transformation matrix is
+```
+a c e
+b d f
+0 0 1
+```
+
+### ShortvasContext#rotateAbout(angle, x, y) -> ShortvasContext
+
+_Aliases: `pivot`_
+
+A composite transformation equivalent to `translate(x, y)`, `rotate(angle)`,
+and `translate(-x, -y)`, which has the effect of rotating everything by `angle`
+radians about the point `(x, y)`.
+
+### ShortvasContext#rotateDeg(angle) -> ShortvasContext
+
+Multiples the passed angle by pi / 180, then passes it to `rotate`.
+
+### ShortvasContext#rotateAboutDeg(angle, x, y) -> ShortvasContext
+
+_Aliases: `pivotDeg`_
+
+Multiples the passed angle by pi / 180, then passes it and the other arguments
+to `rotateAbout`.
+
+### ShortvasContext#toRect(from[, to = [0, 0, 1, 1]]) -> ShortvasContext
+
+A composite transformation of translations and scaling. Pass in two rectangles
+in `[x, y, w, h]` format. The rectangle corresponding to `from` in the old
+coordinate system will become the rectangle corresponding to `to` in the new
+coordinate system.
+
+For example, if you wanted your context to have the top left corner be (0, 0) and
+the bottom right corner be (1, 1) and your ShortvasContext is `shortCtx`,
+``` js
+shortCtx.resetTransform().toRect(0, 0, shortCtx.width, shortCtx.height);
+```
 
 ### ShortvasContext#block(f) -> ShortvasContext
 
-Saves the context, runs the function `f`,  andrestores the context. If you
-aren't in an environment with arrow functions, this method is fairly useless
-since you're throwing the `this` binding away for little benefit. Chainable.
+Saves the context, runs the function `f`, and restores the context.
 
-### ShortvasContext#bp() -> ShortvasPath
+### ShortvasContext#blockTransform(f) -> ShortvasContext
 
-Calls `beginPath` and returns a `ShortvasPath` instance.
+_Aliases: `blockT`_
+
+Runs the function `f`, and sets the transformation matrix back to what it was
+originally before `f` was called. The desired transformations should be done
+inside `f`.
+
+### ShortvasContext#with(props, f) -> ShortvasContext
+
+Pass an object for `props`. This method runs through each `key: value` pair
+in `props`, sets the ShortvasContext's `key` property to `value`, runs the
+function `f`, then resets all the ShortvasContext properties to their value
+from before this function was run, regardless of whether `f` changed them.
+
+This is nearly equivalent to `block` while setting the properties at the
+beginning of the called function. But it may save on performance if you are
+only setting one or two context properties, i.e. `save` and `restore` would be
+overkill.
+
+### ShortvasContext#blank(color) -> ShortvasContext
+
+Wipes the entire Canvas by temporarily resetting the transform, then filling
+the rectangle spanning the whole Canvas with the given color. `color` can be
+any value accepted by `Shortvas.color`.
+
+### ShortvasContext#clear(color) -> ShortvasContext
+
+Clears the entire Canvas by temporarily resetting the transform, then calling
+`clearRect` on the whole Canvas area. This turns the Canvas transparent, unlike
+`blank`.
+
+### ShortvasContext#beginPath() -> ShortvasPath
+
+_Aliases: `bp`_
+
+Calls `Context#beginPath` and returns a `ShortvasPath` instance.
 
 ## ShortvasPath
 
@@ -109,23 +204,23 @@ Since it is not in all browsers yet, `Path2D` support is not provided.
 
 _Aliases: `M`_
 
-Equivalent of `Context#moveTo`. Chainable.
+Equivalent of `Context#moveTo`.
 
 ### ShortvasPath#m(dx, dy) -> ShortvasPath
 
 Relative version of `Context#moveTo`, moving to `x + dx, y + dy` where `x, y` are
-the coordinates of the last path vertex (default 0, 0). Chainable.
+the coordinates of the last path vertex (default 0, 0).
 
 ### ShortvasPath#lineTo(x, y) -> ShortvasPath
 
 _Aliases: `L`_
 
-Equivalent of `Context#lineTo`. Chainable.
+Equivalent of `Context#lineTo`.
 
 ### ShortvasPath#l(dx, dy) -> ShortvasPath
 
 Relative version of `Context#lineTo`, drawing a line to `x + dx, y + dy` where
-`x, y` are the coordinates of the last path vertex (default 0, 0). Chainable.
+`x, y` are the coordinates of the last path vertex (default 0, 0).
 
 ### ShortvasPath#H(x) -> ShortvasPath
 
@@ -136,7 +231,7 @@ Chainable.
 ### ShortvasPath#h(dx) -> ShortvasPath
 
 Relative version of `ShortvasPath#H`, drawing a line to `x + dx, y` where
-`x, y` are the coordinates of the last path vertex (default 0, 0). Chainable.
+`x, y` are the coordinates of the last path vertex (default 0, 0).
 
 ### ShortvasPath#V(y) -> ShortvasPath
 
@@ -147,25 +242,25 @@ Chainable.
 ### ShortvasPath#v(dy) -> ShortvasPath
 
 Relative version of `ShortvasPath#V`, drawing a line to `x, y + dy` where
-`x, y` are the coordinates of the last path vertex (default 0, 0). Chainable.
+`x, y` are the coordinates of the last path vertex (default 0, 0).
 
 ### ShortvasPath#quadraticCurveTo(cpx, cpy, x, y) -> ShortvasPath
 
 _Aliases: `Q`_
 
-Equivalent of `Context#quadraticCurveTo`. Chainable.
+Equivalent of `Context#quadraticCurveTo`.
 
 ### ShortvasPath#q(dcpx, dcpy, dx, dy) -> ShortvasPath
 
 Relative version of `ShortvasPath#quadraticCurveto`, drawing a quadratic curve
 to `x + dcpx, y + dcpy, x + dx, y + dy` where `x, y` are the coordinates of the
-last path vertex (default 0, 0). Chainable.
+last path vertex (default 0, 0).
 
 ### ShortvasPath#bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) -> ShortvasPath
 
 _Aliases: `C`_
 
-Equivalent of `Context#bezierCurveTo`. Chainable.
+Equivalent of `Context#bezierCurveTo`.
 
 Unlike SVG, Shortvas does not yet support more than six arguments.
 
@@ -173,31 +268,31 @@ Unlike SVG, Shortvas does not yet support more than six arguments.
 
 Relative version of `ShortvasPath#bezierCurveto`, drawing a bezier curve to `x
 + dcp1x, y + dcp1y, x + dcp2x, y + dcp2y, x + dx, y + dy` where `x, y` are the
-coordinates of the last path vertex (default 0, 0). Chainable.
+coordinates of the last path vertex (default 0, 0).
 
 ### ShortvasPath#rect(x, y, width, height) -> ShortvasPath
 
-Equivalent of `Context#rect`. Chainable.
+Equivalent of `Context#rect`.
 
 ### ShortvasPath#arc(x, y, radius, startAngle, endAngle, anticlockwise) -> ShortvasPath
 
-Equivalent of `Context#arc`. Chainable.
+Equivalent of `Context#arc`.
 
 Note that SVG's `A` does not match this method. `A` is a planned but not
 currently implemented method.
 
 ### ShortvasPath#arcTo(cp1x, cp1y, cp2x, cp2y, r) -> ShortvasPath
 
-Equivalent of `Context#arcTo`. Chainable.
+Equivalent of `Context#arcTo`.
 
-For the performance-concerned, note that the computations required to make this
-work with relative positioning are somewhat involved.
+Note that significant computation is needed to ensure this method plugs into
+relative methods like `l` correctly, which may be a performance liability.
 
 ### ShortvasPath#closePath() -> ShortvasPath
 
 _Aliases: `Z`, `z`_
 
-Equivalent of `Context#closePath()`. Chainable.
+Equivalent of `Context#closePath()`.
 
 This will not adjust the current `x, y` position, instead expecting the next
 method call (if any) to have absolute coordinates. This may change in the
@@ -264,6 +359,12 @@ the [living standard](https://html.spec.whatwg.org/multipage/scripting.html#canv
 and what was implemented in Chrome 46.0.2490.80.
 - Properties: `canvas, globalAlpha, globalCompositeOperation, strokeStyle, fillStyle, shadowOffsetX, shadowOffsetY, shadowBlur, shadowColor, lineWidth, lineCap, lineJoin, miterLimit, lineDashOffset, font, textAlign, textBaseline`
 - Methods: `save, restore, scale, rotate, translate, transform, setTransform, resetTransform, createLinearGradient, createRadialGradient, createPattern, clearRect, fillRect, strokeRect, beginPath, fill, stroke, drawFocusIfNeeded, clip, isPointInPath, isPointInStroke, fillText, strokeText, measureText, drawImage, createImageData, getImageData, putImageData, getContextAttributes, setLineDash, getLineDash, closePath, moveTo, lineTo, quadraticCurveTo, bezierCurveTo, arcTo, rect, arc`
+
+The set of proxied properties and methods is fixed to prevent new Canvas
+features from conflicting with Shortvas additions or aliases. Such conflicts
+will also be resolved in the next Shortvas release.
+
+TODO
 
 # License
 
