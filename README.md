@@ -1,3 +1,5 @@
+NOTE: WIP, not yet published on NPM.
+
 # shortvas
 
 A wrapper around a Canvas Context providing some shorter names, altered
