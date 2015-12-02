@@ -40,6 +40,11 @@ describe("Shortvas", function () {
     expect(shortCtxBase).to.not.equal(shortCtxOther);
   });
 
+  it("should implement color", function () {
+    expect(Shortvas.color).to.be.a("function");
+    expect(Shortvas.color).to.equal(Utils.convertColor);
+  });
+
   it("should implement extend", function () {
     Shortvas.extend({
       newMethod: function () {},
