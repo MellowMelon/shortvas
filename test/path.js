@@ -235,6 +235,23 @@ describe("ShortvasPath", function () {
         {key: "moveTo", arguments: [1, 2]},
       ]);
     });
+
+    it("should flatten one level of arrays in arguments", function () {
+      shortCtx.bp()
+        .M([1, 2])
+        .L([1], 2)
+        .Q([1, 2], [3, 4])
+        .C([1, 2], 3, [4, 5, 6])
+        .arcTo([1, 2, 3, 4, 5]);
+      expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "beginPath", arguments: []},
+        {key: "moveTo", arguments: [1, 2]},
+        {key: "lineTo", arguments: [1, 2]},
+        {key: "quadraticCurveTo", arguments: [1, 2, 3, 4]},
+        {key: "bezierCurveTo", arguments: [1, 2, 3, 4, 5, 6]},
+        {key: "arcTo", arguments: [1, 2, 3, 4, 5]},
+      ]);
+    });
   });
 
   describe("finishing API", function () {
