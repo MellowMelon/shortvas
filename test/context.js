@@ -130,6 +130,10 @@ describe("ShortvasContext", function () {
     expect(shortCtx.getTransform()).to.deep.equal([1, 0, 0, 1, 1, 2]);
   });
 
+  it("should alias getT to getTransform", function () {
+    expect(shortCtx.getT, "getT").to.equal(shortCtx.getTransform);
+  });
+
   it("should implement rotateAbout", function () {
     var ret = shortCtx.rotateAbout(1, 2, 3);
     expect(ret, "return").to.equal(shortCtx);
