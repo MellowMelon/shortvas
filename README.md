@@ -60,6 +60,16 @@ for other types is undefined.
 All colors that can be passed into the various Shortvas methods pass through
 this function, so you probably don't need to use it directly.
 
+## Shortvas.extend(methods)
+
+Extends the prototype of `ShortvasContext` with all methods on the provided
+object which are own and enumerable. Nonfunction values will be ignored.
+
+## Shortvas.extendPath(methods)
+
+Extends the prototype of `ShortvasPath` with all methods on the provided
+object which are own and enumerable. Nonfunction values will be ignored.
+
 ## ShortvasContext
 
 A `ShortvasContext` is returned from the module's top level `get` method and is
@@ -105,6 +115,8 @@ Equivalent to `context.canvas.height` on the underlying context, and can be
 assigned to like oher proxied properties.
 
 ### ShortvasContext#getTransform() -> Array
+
+_Aliases: `getT`_
 
 Returns an array `[a, b, c, d, e, f]` representing the current transformation
 matrix with the same format as the arguments one would pass to

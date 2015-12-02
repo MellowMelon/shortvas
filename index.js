@@ -1,4 +1,5 @@
 var ShortvasContext = require("./lib/context.js");
+var ShortvasPath = require("./lib/path.js");
 var convertColor = require("./lib/utils.js").convertColor;
 
 exports.get = function (context) {
@@ -23,3 +24,23 @@ exports.get = function (context) {
 };
 
 exports.color = convertColor;
+
+exports.extend = function (methods) {
+  for (var k in methods) {
+    if (methods.hasOwnProperty(k)) {
+      if (typeof methods[k] === "function") {
+        ShortvasContext.prototype[k] = methods[k];
+      }
+    }
+  }
+};
+
+exports.extendPath = function (methods) {
+  for (var k in methods) {
+    if (methods.hasOwnProperty(k)) {
+      if (typeof methods[k] === "function") {
+        ShortvasPath.prototype[k] = methods[k];
+      }
+    }
+  }
+};
