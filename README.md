@@ -33,7 +33,7 @@ var canvas1 = document.createElement("canvas");
 var longhand = canvas1.getContext("2d");
 
 var canvas2 = document.createElement("canvas");
-var shorthand = new Shortvas(canvas2); // A context can also be passed in.
+var shorthand = Shortvas.get(canvas2); // A context can also be passed in.
 
 // Draw a red diagonal line.
 
@@ -56,7 +56,7 @@ longhand.fillStyle = "#0000FF";
 longhand.beginPath();
 longhand.moveTo(0.5, 0);
 longhand.lineTo(0, 0.5);
-longhand.lineto(0.5, 1);
+longhand.lineTo(0.5, 1);
 longhand.lineTo(1, 0.5);
 longhand.closePath();
 longhand.fill();
