@@ -264,6 +264,7 @@ describe("ShortvasPath", function () {
       var ret = shortCtx.bp().stroke("#0000FF", 2);
       expect(ret, "return").to.equal(shortCtx);
       expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "beginPath", arguments: []},
         {key: "strokeStyle", set: "#0000FF"},
         {key: "lineWidth", set: 2},
         {key: "stroke", arguments: []},
@@ -274,6 +275,7 @@ describe("ShortvasPath", function () {
       var ret = shortCtx.bp().fill("#0000CC", "evenodd");
       expect(ret, "return").to.equal(shortCtx);
       expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "beginPath", arguments: []},
         {key: "fillStyle", set: "#0000CC"},
         {key: "fill", arguments: ["evenodd"]},
       ]);
@@ -293,6 +295,7 @@ describe("ShortvasPath", function () {
       var ret = p.strokeAnd("#0000FF", 2);
       expect(ret, "return").to.equal(p);
       expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "beginPath", arguments: []},
         {key: "strokeStyle", set: "#0000FF"},
         {key: "lineWidth", set: 2},
         {key: "stroke", arguments: []},
@@ -304,6 +307,7 @@ describe("ShortvasPath", function () {
       var ret = p.fillAnd("#0000CC", "evenodd");
       expect(ret, "return").to.equal(p);
       expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "beginPath", arguments: []},
         {key: "fillStyle", set: "#0000CC"},
         {key: "fill", arguments: ["evenodd"]},
       ]);

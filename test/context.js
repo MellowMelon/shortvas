@@ -183,7 +183,7 @@ describe("ShortvasContext", function () {
     });
     expect(ret, "return").to.equal(shortCtx);
     expect(Tracker.getActions(backingCtx)).to.deep.equal([
-      {key: "strokeStyle", set: "#FF0000"},
+      {key: "strokeStyle", set: "#ff0000"},
       {key: "lineWidth", set: 2},
     ]);
   });
@@ -196,19 +196,19 @@ describe("ShortvasContext", function () {
     expect(ret, "return").to.equal(shortCtx);
     expect(Tracker.getActions(backingCtx)).to.deep.equal([
       {key: "save", arguments: []},
-      {key: "strokeStyle", set: "#FF0000"},
+      {key: "strokeStyle", set: "#ff0000"},
       {key: "lineWidth", set: 2},
     ]);
   });
 
   it("should implement block with one argument", function () {
     var ret = shortCtx.block(function () {
-      shortCtx.strokeStyle = "#FF0000";
+      shortCtx.strokeStyle = 0xFF0000;
     });
     expect(ret, "return").to.equal(shortCtx);
     expect(Tracker.getActions(backingCtx)).to.deep.equal([
       {key: "save", arguments: []},
-      {key: "strokeStyle", set: "#FF0000"},
+      {key: "strokeStyle", set: "#ff0000"},
       {key: "restore", arguments: []},
     ]);
   });
@@ -220,7 +220,7 @@ describe("ShortvasContext", function () {
     expect(ret, "return").to.equal(shortCtx);
     expect(Tracker.getActions(backingCtx)).to.deep.equal([
       {key: "save", arguments: []},
-      {key: "strokeStyle", set: "#FF0000"},
+      {key: "strokeStyle", set: "#ff0000"},
       {key: "scale", arguments: [2, 2]},
       {key: "restore", arguments: []},
     ]);
