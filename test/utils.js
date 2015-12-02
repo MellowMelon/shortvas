@@ -31,4 +31,22 @@ describe("utils", function () {
       expect(Utils.convertColor(0x000001)).to.equal("#000001");
     });
   });
+
+  describe("flatten", function () {
+    it("should flatten nested arrays", function () {
+      expect(Utils.flatten([[1, 2], 3])).to.deep.equal([1, 2, 3]);
+    });
+
+    it("should flatten array-like objects", function () {
+      expect(Utils.flatten({
+        0: {0: 1, 1: 2, length: 2},
+        1: 3,
+        length: 2,
+      })).to.deep.equal([1, 2, 3]);
+    });
+
+    it("should leave arrays with no nesting untouched", function () {
+      expect(Utils.flatten([1, 2, 3])).to.deep.equal([1, 2, 3]);
+    });
+  });
 });
