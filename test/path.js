@@ -261,82 +261,58 @@ describe("ShortvasPath", function () {
 
   describe("finishing API", function () {
     it("should implement stroke", function () {
-      shortCtx.strokeStyle = "#FF0000";
-      shortCtx.lineWidth = 1;
       var ret = shortCtx.bp().stroke("#0000FF", 2);
       expect(ret, "return").to.equal(shortCtx);
-      var actionsSlice = Tracker.getActions(backingCtx).slice(3, 6);
-      expect(actionsSlice).to.deep.equal([
+      expect(Tracker.getActions(backingCtx)).to.deep.equal([
         {key: "strokeStyle", set: "#0000FF"},
         {key: "lineWidth", set: 2},
         {key: "stroke", arguments: []},
       ]);
-      expect(backingCtx.strokeStyle, "restored strokeStyle")
-        .to.equal("#FF0000");
-      expect(backingCtx.lineWidth, "restored lineWidth")
-        .to.equal(1);
     });
 
     it("should implement fill", function () {
-      shortCtx.fillStyle = "#CC0000";
       var ret = shortCtx.bp().fill("#0000CC", "evenodd");
       expect(ret, "return").to.equal(shortCtx);
-      var actionsSlice = Tracker.getActions(backingCtx).slice(2, 4);
-      expect(actionsSlice).to.deep.equal([
+      expect(Tracker.getActions(backingCtx)).to.deep.equal([
         {key: "fillStyle", set: "#0000CC"},
         {key: "fill", arguments: ["evenodd"]},
       ]);
-      expect(backingCtx.fillStyle, "restored fillStyle")
-        .to.equal("#CC0000");
-    });
-
-    it("should implement strokeFill", function () {
-      shortCtx.strokeStyle = "#FF0000";
-      shortCtx.lineWidth = 1;
-      shortCtx.fillStyle = "#CC0000";
-      var ret = shortCtx.bp().strokeFill("#0000FF", 2, "#0000CC", "evenodd");
-      expect(ret, "return").to.equal(shortCtx);
-      var actionsSlice = Tracker.getActions(backingCtx).slice(4, 9);
-      expect(actionsSlice).to.deep.equal([
-        {key: "strokeStyle", set: "#0000FF"},
-        {key: "lineWidth", set: 2},
-        {key: "fillStyle", set: "#0000CC"},
-        {key: "stroke", arguments: []},
-        {key: "fill", arguments: ["evenodd"]},
-      ]);
-      expect(backingCtx.strokeStyle, "restored strokeStyle")
-        .to.equal("#FF0000");
-      expect(backingCtx.lineWidth, "restored lineWidth")
-        .to.equal(1);
-      expect(backingCtx.fillStyle, "restored fillStyle")
-        .to.equal("#CC0000");
-    });
-
-    it("should implement fillStroke", function () {
-      shortCtx.strokeStyle = "#FF0000";
-      shortCtx.lineWidth = 1;
-      shortCtx.fillStyle = "#CC0000";
-      var ret = shortCtx.bp().fillStroke("#0000CC", "evenodd", "#0000FF", 2);
-      expect(ret, "return").to.equal(shortCtx);
-      var actionsSlice = Tracker.getActions(backingCtx).slice(4, 9);
-      expect(actionsSlice).to.deep.equal([
-        {key: "strokeStyle", set: "#0000FF"},
-        {key: "lineWidth", set: 2},
-        {key: "fillStyle", set: "#0000CC"},
-        {key: "fill", arguments: ["evenodd"]},
-        {key: "stroke", arguments: []},
-      ]);
-      expect(backingCtx.strokeStyle, "restored strokeStyle")
-        .to.equal("#FF0000");
-      expect(backingCtx.lineWidth, "restored lineWidth")
-        .to.equal(1);
-      expect(backingCtx.fillStyle, "restored fillStyle")
-        .to.equal("#CC0000");
     });
 
     it("should implement clip", function () {
       var ret = shortCtx.bp().clip("evenodd");
       expect(ret, "return").to.equal(shortCtx);
+      expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "beginPath", arguments: []},
+        {key: "clip", arguments: ["evenodd"]},
+      ]);
+    });
+
+    it("should implement strokeAnd", function () {
+      var p = shortCtx.bp();
+      var ret = p.strokeAnd("#0000FF", 2);
+      expect(ret, "return").to.equal(p);
+      expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "strokeStyle", set: "#0000FF"},
+        {key: "lineWidth", set: 2},
+        {key: "stroke", arguments: []},
+      ]);
+    });
+
+    it("should implement fillAnd", function () {
+      var p = shortCtx.bp();
+      var ret = p.fillAnd("#0000CC", "evenodd");
+      expect(ret, "return").to.equal(p);
+      expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "fillStyle", set: "#0000CC"},
+        {key: "fill", arguments: ["evenodd"]},
+      ]);
+    });
+
+    it("should implement clipAnd", function () {
+      var p = shortCtx.bp();
+      var ret = p.clipAnd("evenodd");
+      expect(ret, "return").to.equal(p);
       expect(Tracker.getActions(backingCtx)).to.deep.equal([
         {key: "beginPath", arguments: []},
         {key: "clip", arguments: ["evenodd"]},

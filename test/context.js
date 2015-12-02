@@ -103,7 +103,7 @@ describe("ShortvasContext", function () {
     ]);
   });
 
-  it("should preserve the transform when restoring an empty stack", function () {
+  it("should preserve transforms when restoring an empty stack", function () {
     shortCtx.translate(1, 2).restore();
     expect(shortCtx.getTransform()).to.deep.equal([1, 0, 0, 1, 1, 2]);
   });
@@ -176,7 +176,32 @@ describe("ShortvasContext", function () {
     ]);
   });
 
-  it("should wrap block in save and restore", function () {
+  it("should implement set", function () {
+    var ret = shortCtx.set({
+      strokeStyle: 0xFF0000,
+      lineWidth: 2,
+    });
+    expect(ret, "return").to.equal(shortCtx);
+    expect(Tracker.getActions(backingCtx)).to.deep.equal([
+      {key: "strokeStyle", set: "#FF0000"},
+      {key: "lineWidth", set: 2},
+    ]);
+  });
+
+  it("should implement with", function () {
+    var ret = shortCtx.with({
+      strokeStyle: 0xFF0000,
+      lineWidth: 2,
+    });
+    expect(ret, "return").to.equal(shortCtx);
+    expect(Tracker.getActions(backingCtx)).to.deep.equal([
+      {key: "save", arguments: []},
+      {key: "strokeStyle", set: "#FF0000"},
+      {key: "lineWidth", set: 2},
+    ]);
+  });
+
+  it("should implement block with one argument", function () {
     var ret = shortCtx.block(function () {
       shortCtx.strokeStyle = "#FF0000";
     });
@@ -188,12 +213,16 @@ describe("ShortvasContext", function () {
     ]);
   });
 
-  it("should restore old property values after with", function () {
-    shortCtx.lineWidth = 2;
-    var ret = shortCtx.with({
-      lineWidth: 3,
-    }, function () {
-
+  it("should implement block with two arguments", function () {
+    var ret = shortCtx.block({strokeStyle: 0xFF0000}, function () {
+      shortCtx.scale(2, 2);
     });
+    expect(ret, "return").to.equal(shortCtx);
+    expect(Tracker.getActions(backingCtx)).to.deep.equal([
+      {key: "save", arguments: []},
+      {key: "strokeStyle", set: "#FF0000"},
+      {key: "scale", arguments: [2, 2]},
+      {key: "restore", arguments: []},
+    ]);
   });
 });

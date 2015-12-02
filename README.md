@@ -125,14 +125,15 @@ radians about the point `(x, y)`.
 
 ### ShortvasContext#rotateDeg(angle) -> ShortvasContext
 
-Multiples the passed angle by pi / 180, then passes it to `rotate`.
+A composite transformation that multiples the passed angle by pi / 180, then
+passes it to `rotate`.
 
 ### ShortvasContext#rotateAboutDeg(angle, x, y) -> ShortvasContext
 
 _Aliases: `pivotDeg`_
 
-Multiples the passed angle by pi / 180, then passes it and the other arguments
-to `rotateAbout`.
+A composite transformation that multiples the passed angle by pi / 180, then
+passes it and the other arguments to `rotateAbout`.
 
 ### ShortvasContext#toRect(from[, to = [0, 0, 1, 1]]) -> ShortvasContext
 
@@ -141,35 +142,28 @@ in `[x, y, w, h]` format. The rectangle corresponding to `from` in the old
 coordinate system will become the rectangle corresponding to `to` in the new
 coordinate system.
 
-For example, if you wanted your context to have the top left corner be (0, 0) and
-the bottom right corner be (1, 1) and your ShortvasContext is `shortCtx`,
+For example, if you wanted your context to have the top left corner be (0, 0)
+and the bottom right corner be (1, 1) and your instance is named `sCtx`,
+
 ``` js
-shortCtx.resetTransform().toRect(0, 0, shortCtx.width, shortCtx.height);
+sCtx.resetT().toRect(0, 0, sCtx.width, sCtx.height);
 ```
 
-### ShortvasContext#block(f) -> ShortvasContext
+### ShortvasContext#set(props) -> ShortvasContext
 
-Saves the context, runs the function `f`, and restores the context.
+Sets the provided properties on the context. `shortCtx.set(props)` and
+`Object.assign(shortCtx, props)` will often do the same thing.
 
-### ShortvasContext#blockTransform(f) -> ShortvasContext
+### ShortvasContext#with(props) -> ShortvasContext
 
-_Aliases: `blockT`_
+Same as `ShortvasContext#set` except that `save` is called just before, so it
+should be balanced with a call to `restore`.
 
-Runs the function `f`, and sets the transformation matrix back to what it was
-originally before `f` was called. The desired transformations should be done
-inside `f`.
+### ShortvasContext#block([props, ]f) -> ShortvasContext
 
-### ShortvasContext#with(props, f) -> ShortvasContext
-
-Pass an object for `props`. This method runs through each `key: value` pair
-in `props`, sets the ShortvasContext's `key` property to `value`, runs the
-function `f`, then resets all the ShortvasContext properties to their value
-from before this function was run, regardless of whether `f` changed them.
-
-This is nearly equivalent to `block` while setting the properties at the
-beginning of the called function. But it may save on performance if you are
-only setting one or two context properties, i.e. `save` and `restore` would be
-overkill.
+This calls `save`, runs the function `f`, and then calls `restore`. If `props`
+is provided, it will set those properties between `save` and `f`, in a manner
+similar to `ShortvasContext#with`.
 
 ### ShortvasContext#blank(color) -> ShortvasContext
 
@@ -197,10 +191,13 @@ paths. Many of the vertex method names are inspired by the
 The instances also contain convenient methods for finishing paths with strokes,
 fills, or both.
 
+Unlike `ShortvasContext`, this does not expose all the usual Canvas context
+methods and properties.
+
 Note that the full capabilities of the SVG d attribute are not in the current
 version. For example, `T`, `S`, and `A` are missing.
 
-Since it is not in all browsers yet, `Path2D` support is not provided.
+Also, since it is not in all browsers yet, `Path2D` support is not provided.
 
 ### ShortvasPath#moveTo(x, y) -> ShortvasPath
 
@@ -302,27 +299,36 @@ future.
 
 ### ShortvasPath#stroke(strokeStyle, lineWidth) -> ShortvasContext
 
-Finishes the current path by calling `Canvas#stroke` while the `strokeStyle`
-and `lineWidth` are set to the given parameters, then resets `strokeStyle` and
-`lineWidth` to their original values. Returns the original ShortvasContext.
+Finishes the current path by setting `strokeStyle` and `lineWidth` to the given
+values, then calling `Context#stroke`. Missing arguments (`null` or `undefined`)
+are not set.
 
 ### ShortvasPath#fill(fillStyle, fillRule) -> ShortvasContext
 
-Finishes the current path by calling `Canvas#fill` with the `fillRule` while the
-`fillStyle` is set to the given parameter, then resets `fillStyle` to its
-original value. Returns the original ShortvasContext.
+Finishes the current path by setting `fillStyle` to the given value, then
+calling `Context#fill` with the provided `fillRule`. Missing arguments (`null`
+or `undefined`) are not set, or in the case of `fillRule` the default
+`"nonzero"` will be used.
 
-### ShortvasPath#strokeFill(strokeStyle, lineWidth, fillStyle, fillRule) -> ShortvasContext
+### ShortvasPath#clip(fillRule) -> ShortvasContext
 
-Like the above, but calls `Canvas#stroke` and `Canvas#fill` in that order.
-Returns the original ShortvasContext.
+Finishes the current path by calling `Context#clip` with the provided
+`fillRule`, which defaults to `"nonzero"`.
 
-Usually you want its cousin `fillStroke` instead.
+### ShortvasPath#strokeAnd(strokeStyle, lineWidth) -> ShortvasPath
 
-### ShortvasPath#fillStroke(fillStyle, fillRule, strokeStyle, lineWidth) -> ShortvasContext
+Identical to `ShortvasPath#stroke` except the ShortvasPath is returned, in case
+you want to do multiple operations on the path.
 
-Like the above, but calls `Canvas#fill` and `Canvas#stroke` in that order.
-Returns the original ShortvasContext.
+### ShortvasPath#fillAnd(fillStyle, fillRule) -> ShortvasPath
+
+Identical to `ShortvasPath#fill` except the ShortvasPath is returned, in case
+you want to do multiple operations on the path.
+
+### ShortvasPath#clipAnd(fillRule) -> ShortvasPath
+
+Identical to `ShortvasPath#clip` except the ShortvasPath is returned, in case
+you want to do multiple operations on the path.
 
 # Install
 
@@ -363,8 +369,8 @@ and what was implemented in Chrome 46.0.2490.80.
 - Methods: `save, restore, scale, rotate, translate, transform, setTransform, resetTransform, createLinearGradient, createRadialGradient, createPattern, clearRect, fillRect, strokeRect, beginPath, fill, stroke, drawFocusIfNeeded, clip, isPointInPath, isPointInStroke, fillText, strokeText, measureText, drawImage, createImageData, getImageData, putImageData, getContextAttributes, setLineDash, getLineDash, closePath, moveTo, lineTo, quadraticCurveTo, bezierCurveTo, arcTo, rect, arc`
 
 The set of proxied properties and methods is fixed to prevent new Canvas
-features from conflicting with Shortvas additions or aliases. Such conflicts
-will also be resolved in the next Shortvas release.
+features from conflicting with Shortvas additions or aliases. That said, any such
+conflicts will also be resolved in updates to this package.
 
 TODO
 
