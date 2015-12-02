@@ -1,5 +1,3 @@
-NOTE: WIP, not yet published on NPM.
-
 # shortvas
 
 A wrapper around a 2D canvas context providing some shorter method names,
