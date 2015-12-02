@@ -51,7 +51,7 @@ longhand.save();
 longhand.translate(40, 20);
 longhand.scale(40, 40);
 longhand.strokeStyle = "#00FF00";
-longhand.lineWidth = 3;
+longhand.lineWidth = 0.1;
 longhand.fillStyle = "#0000FF";
 longhand.beginPath();
 longhand.moveTo(0.5, 0);
@@ -66,7 +66,7 @@ longhand.restore();
 shorthand.s()
   .toRect([40, 20, 40, 40]).bp()
   .M(0.5, 0).L(0, 0.5).L(0.5, 1).L(1, 0.5).Z()
-  .fillAnd(0x0000FF).stroke(0x00FF00, 3)
+  .fillAnd(0x0000FF).stroke(0x00FF00, 0.1)
 .r();
 ```
 
