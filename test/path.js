@@ -28,12 +28,9 @@ describe("ShortvasPath", function () {
       ]);
     });
 
-    it("should implement M", function () {
-      shortCtx.bp().M(1, 2);
-      expect(Tracker.getActions(backingCtx)).to.deep.equal([
-        {key: "beginPath", arguments: []},
-        {key: "moveTo", arguments: [1, 2]},
-      ]);
+    it("should alias M to moveTo", function () {
+      var p = shortCtx.bp();
+      expect(p.M, "M").to.equal(p.moveTo);
     });
 
     it("should implement m", function () {
@@ -53,12 +50,9 @@ describe("ShortvasPath", function () {
       ]);
     });
 
-    it("should implement L", function () {
-      shortCtx.bp().L(1, 2);
-      expect(Tracker.getActions(backingCtx)).to.deep.equal([
-        {key: "beginPath", arguments: []},
-        {key: "lineTo", arguments: [1, 2]},
-      ]);
+    it("should alias L to lineTo", function () {
+      var p = shortCtx.bp();
+      expect(p.L, "L").to.equal(p.lineTo);
     });
 
     it("should implement l", function () {
@@ -114,12 +108,9 @@ describe("ShortvasPath", function () {
       ]);
     });
 
-    it("should implement Q", function () {
-      shortCtx.bp().Q(1, 2, 3, 4);
-      expect(Tracker.getActions(backingCtx)).to.deep.equal([
-        {key: "beginPath", arguments: []},
-        {key: "quadraticCurveTo", arguments: [1, 2, 3, 4]},
-      ]);
+    it("should alias Q to quadraticCurveTo", function () {
+      var p = shortCtx.bp();
+      expect(p.Q, "Q").to.equal(p.quadraticCurveTo);
     });
 
     it("should implement q", function () {
@@ -139,12 +130,9 @@ describe("ShortvasPath", function () {
       ]);
     });
 
-    it("should implement C", function () {
-      shortCtx.bp().C(1, 2, 3, 4, 5, 6);
-      expect(Tracker.getActions(backingCtx)).to.deep.equal([
-        {key: "beginPath", arguments: []},
-        {key: "bezierCurveTo", arguments: [1, 2, 3, 4, 5, 6]},
-      ]);
+    it("should alias C to bezierCurveTo", function () {
+      var p = shortCtx.bp();
+      expect(p.C, "C").to.equal(p.bezierCurveTo);
     });
 
     it("should implement c", function () {
@@ -224,20 +212,10 @@ describe("ShortvasPath", function () {
       ]);
     });
 
-    it("should implement Z", function () {
-      shortCtx.bp().Z();
-      expect(Tracker.getActions(backingCtx)).to.deep.equal([
-        {key: "beginPath", arguments: []},
-        {key: "closePath", arguments: []},
-      ]);
-    });
-
-    it("should implement z", function () {
-      shortCtx.bp().z();
-      expect(Tracker.getActions(backingCtx)).to.deep.equal([
-        {key: "beginPath", arguments: []},
-        {key: "closePath", arguments: []},
-      ]);
+    it("should alias Z and z to closePath", function () {
+      var p = shortCtx.bp();
+      expect(p.Z, "Z").to.equal(p.closePath);
+      expect(p.z, "z").to.equal(p.closePath);
     });
 
     it("should chain all vertex-pushing methods", function () {

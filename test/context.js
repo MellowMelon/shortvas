@@ -74,12 +74,34 @@ describe("ShortvasContext", function () {
     ]);
   });
 
+  it("should alias push and s to save", function () {
+    expect(shortCtx.push, "push").to.equal(shortCtx.save);
+    expect(shortCtx.s, "s").to.equal(shortCtx.save);
+  });
+
   it("should pass restore calls through to underlying context", function () {
     var ret = shortCtx.restore();
     expect(ret, "return").to.equal(shortCtx);
     expect(Tracker.getActions(backingCtx)).to.deep.equal([
       {key: "restore", arguments: []},
     ]);
+  });
+
+  it("should alias pop and r to restore", function () {
+    expect(shortCtx.pop, "pop").to.equal(shortCtx.restore);
+    expect(shortCtx.r, "r").to.equal(shortCtx.restore);
+  });
+
+  it("should alias addT to transform", function () {
+    expect(shortCtx.addT, "addT").to.equal(shortCtx.transform);
+  });
+
+  it("should alias setT to setTransform", function () {
+    expect(shortCtx.setT, "setT").to.equal(shortCtx.setTransform);
+  });
+
+  it("should alias resetT to resetTransform", function () {
+    expect(shortCtx.resetT, "resetT").to.equal(shortCtx.resetTransform);
   });
 
   it("should forward transforms and track them via getTransform", function () {
@@ -118,14 +140,8 @@ describe("ShortvasContext", function () {
     ]);
   });
 
-  it("should implement pivot", function () {
-    var ret = shortCtx.pivot(1, 2, 3);
-    expect(ret, "return").to.equal(shortCtx);
-    expect(Tracker.getActions(backingCtx)).to.deep.equal([
-      {key: "translate", arguments: [2, 3]},
-      {key: "rotate", arguments: [1]},
-      {key: "translate", arguments: [-2, -3]},
-    ]);
+  it("should alias pivot to rotateAbout", function () {
+    expect(shortCtx.pivot, "pivot").to.equal(shortCtx.rotateAbout);
   });
 
   it("should implement rotateDeg", function () {
@@ -146,14 +162,8 @@ describe("ShortvasContext", function () {
     ]);
   });
 
-  it("should implement pivotDeg", function () {
-    var ret = shortCtx.pivotDeg(1, 2, 3);
-    expect(ret, "return").to.equal(shortCtx);
-    expect(Tracker.getActions(backingCtx)).to.deep.equal([
-      {key: "translate", arguments: [2, 3]},
-      {key: "rotate", arguments: [Math.PI / 180]},
-      {key: "translate", arguments: [-2, -3]},
-    ]);
+  it("should alias pivotDeg to rotateAboutDeg", function () {
+    expect(shortCtx.pivotDeg, "pivotDeg").to.equal(shortCtx.rotateAboutDeg);
   });
 
   it("should implement toRect with one argument", function () {
@@ -224,5 +234,15 @@ describe("ShortvasContext", function () {
       {key: "scale", arguments: [2, 2]},
       {key: "restore", arguments: []},
     ]);
+  });
+
+  it("should return a ShortvasPath instance from beginPath", function () {
+    var ret = shortCtx.beginPath();
+    expect(ret.M, "has M").to.be.ok;
+    expect(ret.strokeAnd, "has strokeAnd").to.be.ok;
+  });
+
+  it("should alias bp to beginPath", function () {
+    expect(shortCtx.bp, "bp").to.equal(shortCtx.beginPath);
   });
 });
