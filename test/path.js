@@ -256,23 +256,45 @@ describe("ShortvasPath", function () {
 
   describe("finishing API", function () {
     it("should implement stroke", function () {
-      var ret = shortCtx.bp().stroke("#0000FF", 2);
+      var ret = shortCtx.bp().stroke(0x0000FF, 2);
       expect(ret, "return").to.equal(shortCtx);
       expect(Tracker.getActions(backingCtx)).to.deep.equal([
         {key: "beginPath", arguments: []},
-        {key: "strokeStyle", set: "#0000FF"},
+        {key: "strokeStyle", set: "#0000ff"},
         {key: "lineWidth", set: 2},
         {key: "stroke", arguments: []},
       ]);
     });
 
+    it("should implement stroke with missing arguments", function () {
+      shortCtx.strokeStyle = 0x0000FF;
+      var ret = shortCtx.bp().stroke(null, null);
+      expect(ret, "return").to.equal(shortCtx);
+      expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "strokeStyle", set: "#0000ff"},
+        {key: "beginPath", arguments: []},
+        {key: "stroke", arguments: []},
+      ]);
+    });
+
     it("should implement fill", function () {
-      var ret = shortCtx.bp().fill("#0000CC", "evenodd");
+      var ret = shortCtx.bp().fill(0x0000CC, "evenodd");
       expect(ret, "return").to.equal(shortCtx);
       expect(Tracker.getActions(backingCtx)).to.deep.equal([
         {key: "beginPath", arguments: []},
-        {key: "fillStyle", set: "#0000CC"},
+        {key: "fillStyle", set: "#0000cc"},
         {key: "fill", arguments: ["evenodd"]},
+      ]);
+    });
+
+    it("should implement fill with missing arguments", function () {
+      shortCtx.fillStyle = 0x0000CC;
+      var ret = shortCtx.bp().fill(null, null);
+      expect(ret, "return").to.equal(shortCtx);
+      expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "fillStyle", set: "#0000cc"},
+        {key: "beginPath", arguments: []},
+        {key: "fill", arguments: []},
       ]);
     });
 
@@ -285,13 +307,22 @@ describe("ShortvasPath", function () {
       ]);
     });
 
+    it("should implement clip with missing arguments", function () {
+      var ret = shortCtx.bp().clip(null);
+      expect(ret, "return").to.equal(shortCtx);
+      expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "beginPath", arguments: []},
+        {key: "clip", arguments: []},
+      ]);
+    });
+
     it("should implement strokeAnd", function () {
       var p = shortCtx.bp();
-      var ret = p.strokeAnd("#0000FF", 2);
+      var ret = p.strokeAnd(0x0000FF, 2);
       expect(ret, "return").to.equal(p);
       expect(Tracker.getActions(backingCtx)).to.deep.equal([
         {key: "beginPath", arguments: []},
-        {key: "strokeStyle", set: "#0000FF"},
+        {key: "strokeStyle", set: "#0000ff"},
         {key: "lineWidth", set: 2},
         {key: "stroke", arguments: []},
       ]);
@@ -299,11 +330,11 @@ describe("ShortvasPath", function () {
 
     it("should implement fillAnd", function () {
       var p = shortCtx.bp();
-      var ret = p.fillAnd("#0000CC", "evenodd");
+      var ret = p.fillAnd(0x0000CC, "evenodd");
       expect(ret, "return").to.equal(p);
       expect(Tracker.getActions(backingCtx)).to.deep.equal([
         {key: "beginPath", arguments: []},
-        {key: "fillStyle", set: "#0000CC"},
+        {key: "fillStyle", set: "#0000cc"},
         {key: "fill", arguments: ["evenodd"]},
       ]);
     });
