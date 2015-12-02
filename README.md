@@ -248,7 +248,14 @@ _Aliases: `bp`_
 
 Calls `Context#beginPath` and returns a `ShortvasPath` instance.
 
-## ShortvasPath
+## `ShortvasPath`
+
+``` js
+var Shortvas = require("shortvas");
+var canvas = document.createElement("canvas");
+var shortCtx = Shortvas.get(canvas);
+var path = shortCtx.bp(); // ShortvasPath instance
+```
 
 A `ShortvasPath` instance exposes a number of convenient methods for building
 paths. Many of the vertex method names are inspired by the
@@ -256,17 +263,27 @@ paths. Many of the vertex method names are inspired by the
 The instances also contain convenient methods for finishing paths with strokes,
 fills, or both.
 
-Unlike `ShortvasContext`, this does not expose all the usual canvas context
+Note that the full capabilities of the SVG d attribute are not in the current
+version. For example, `T`, `S`, and `A` are missing.
+
+Unlike `ShortvasContext`, `ShortvasPath` does not expose all the usual canvas context
 methods and properties, so make sure you understand when `ShortvasContext`
 methods are being called and when `ShortvasPath` methods are called. In a
 method chain, you pass from context to path with the `beginPath` (or `bp`)
 context method, and you pass from path to context with the path methods
 `stroke`, `fill`, or `clip`.
 
-Note that the full capabilities of the SVG d attribute are not in the current
-version. For example, `T`, `S`, and `A` are missing.
+All vertex methods will automatically flatten one level of array nesting in
+their passed arguments. This means that the following lines are equivalent:
+``` js
+path.Q(1, 2, 3, 4);
+path.Q([1, 2], [3, 4]);
+path.Q([1, 2, 3, 4]);
+path.Q([1, 2], 3, 4);
+path.Q(1, [2, 3], 4);
+```
 
-Also, since it is not in all browsers yet, `Path2D` support is not provided.
+Since it is not in all browsers yet, `Path2D` support is not provided.
 
 ### `ShortvasPath#moveTo(x, y) -> ShortvasPath`
 
