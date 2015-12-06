@@ -74,9 +74,9 @@ describe("ShortvasContext", function () {
     ]);
   });
 
-  it("should alias push and s to save", function () {
+  it("should alias push and sv to save", function () {
     expect(shortCtx.push, "push").to.equal(shortCtx.save);
-    expect(shortCtx.s, "s").to.equal(shortCtx.save);
+    expect(shortCtx.sv, "sv").to.equal(shortCtx.save);
   });
 
   it("should pass restore calls through to underlying context", function () {
@@ -87,9 +87,9 @@ describe("ShortvasContext", function () {
     ]);
   });
 
-  it("should alias pop and r to restore", function () {
+  it("should alias pop and rs to restore", function () {
     expect(shortCtx.pop, "pop").to.equal(shortCtx.restore);
-    expect(shortCtx.r, "r").to.equal(shortCtx.restore);
+    expect(shortCtx.rs, "rs").to.equal(shortCtx.restore);
   });
 
   it("should alias addT to transform", function () {
