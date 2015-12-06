@@ -19,6 +19,10 @@ describe("ShortvasContext path methods", function () {
     shortCtx = Shortvas.get(backingCtx);
   });
 
+  it("should alias bp to beginPath", function () {
+    expect(shortCtx.bp, "bp").to.equal(shortCtx.beginPath);
+  });
+
   describe("vertex API", function () {
     it("should implement moveTo", function () {
       var ret = shortCtx.bp().moveTo(1, 2);
@@ -236,6 +240,16 @@ describe("ShortvasContext path methods", function () {
     it("should start at 0, 0 if first method is relative", function () {
       shortCtx.bp().m(1, 2);
       expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "beginPath", arguments: []},
+        {key: "moveTo", arguments: [1, 2]},
+      ]);
+    });
+
+    it("should start at 0, 0 after every beginPath call", function () {
+      shortCtx.bp().M(1, 2).bp().m(1, 2);
+      expect(Tracker.getActions(backingCtx)).to.deep.equal([
+        {key: "beginPath", arguments: []},
+        {key: "moveTo", arguments: [1, 2]},
         {key: "beginPath", arguments: []},
         {key: "moveTo", arguments: [1, 2]},
       ]);

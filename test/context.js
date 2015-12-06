@@ -239,8 +239,4 @@ describe("ShortvasContext", function () {
       {key: "restore", arguments: []},
     ]);
   });
-
-  it("should alias bp to beginPath", function () {
-    expect(shortCtx.bp, "bp").to.equal(shortCtx.beginPath);
-  });
 });
