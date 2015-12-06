@@ -1,6 +1,6 @@
 {
   "name": "shortvas",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Shorthand for canvas context operations.",
   "main": "index.js",
   "license": "MIT",
