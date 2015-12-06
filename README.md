@@ -61,11 +61,11 @@ longhand.fill();
 longhand.stroke();
 longhand.restore();
 
-shorthand.s()
+shorthand.sv()
   .toRect([40, 20, 40, 40]).bp()
   .M(0.5, 0).L(0, 0.5).L(0.5, 1).L(1, 0.5).Z()
   .fillAnd(0x0000FF).stroke(0x00FF00, 0.1)
-.r();
+.rs();
 ```
 
 # API
@@ -99,11 +99,6 @@ this function, so you probably don't need to use it directly.
 Extends the prototype of `ShortvasContext` with all methods on the provided
 object which are own and enumerable. Nonfunction values will be ignored.
 
-### `Shortvas.extendPath(methods)`
-
-Extends the prototype of `ShortvasPath` with all methods on the provided
-object which are own and enumerable. Nonfunction values will be ignored.
-
 ## `ShortvasContext`
 
 ``` js
@@ -123,6 +118,10 @@ Shortvas is made with the same canvas or its 2D context. Besides making it a
 lot harder to break `getTransform`, it's also more consistent with how a
 canvas's `getContext` works.
 
+All `ShortvasContext` methods that would ordinarily not return anything instead
+return the called `ShortvasContext` so that chaining is possible. This includes
+both inherited context methods and the new methods documented below.
+
 ### Inherited Canvas Properties and Methods
 
 As mentioned above, `ShortvasContext` implements all of the usual properties
@@ -139,14 +138,13 @@ and what was implemented in Chrome 46.0.2490.80.
 - Properties: `canvas`, `globalAlpha`, `globalCompositeOperation`, `strokeStyle`, `fillStyle`, `shadowOffsetX`, `shadowOffsetY`, `shadowBlur`, `shadowColor`, `lineWidth`, `lineCap`, `lineJoin`, `miterLimit`, `lineDashOffset`, `font`, `textAlign`, `textBaseline`
 - Methods: `save`, `restore`, `scale`, `rotate`, `translate`, `transform`, `setTransform`, `resetTransform`, `createLinearGradient`, `createRadialGradient`, `createPattern`, `clearRect`, `fillRect`, `strokeRect`, `beginPath`, `fill`, `stroke`, `drawFocusIfNeeded`, `clip`, `isPointInPath`, `isPointInStroke`, `fillText`, `strokeText`, `measureText`, `drawImage`, `createImageData`, `getImageData`, `putImageData`, `getContextAttributes`, `setLineDash`, `getLineDash`, `closePath`, `moveTo`, `lineTo`, `quadraticCurveTo`, `bezierCurveTo`, `arcTo`, `rect`, `arc`
 
-The following aliases of existing canvas properties and methods exist on
-`ShortvasContext`:
-- `save`: `push`, `s`
-- `restore`: `pop`, `r`
+In addition to several documented below, the following aliases of existing
+canvas properties and methods exist on `ShortvasContext`:
+- `save`: `push`, `sv`
+- `restore`: `pop`, `rs`
 - `transform`: `addT`
 - `setTransform`: `setT`
 - `resetTransform`: `resetT`
-- `beginPath`: `bp`
 
 ### `ShortvasContext#context -> Context`
 
@@ -178,7 +176,7 @@ b d f
 0 0 1
 ```
 
-### `ShortvasContext#rotateAbout(angle, x, y) -> ShortvasContext`
+### `ShortvasContext#rotateAbout(angle, x, y)`
 
 _Aliases: `pivot`_
 
@@ -186,19 +184,19 @@ A composite transformation equivalent to `translate(x, y)`, `rotate(angle)`,
 and `translate(-x, -y)`, which has the effect of rotating everything by `angle`
 radians about the point `(x, y)`.
 
-### `ShortvasContext#rotateDeg(angle) -> ShortvasContext`
+### `ShortvasContext#rotateDeg(angle)`
 
 A composite transformation that multiples the passed angle by pi / 180, then
 passes it to `rotate`.
 
-### `ShortvasContext#rotateAboutDeg(angle, x, y) -> ShortvasContext`
+### `ShortvasContext#rotateAboutDeg(angle, x, y)`
 
 _Aliases: `pivotDeg`_
 
 A composite transformation that multiples the passed angle by pi / 180, then
 passes it and the other arguments to `rotateAbout`.
 
-### `ShortvasContext#toRect(from[, to = [0, 0, 1, 1]]) -> ShortvasContext`
+### `ShortvasContext#toRect(from[, to = [0, 0, 1, 1]])`
 
 A composite transformation of translations and scaling. Pass in two rectangles
 in `[x, y, w, h]` format. The rectangle corresponding to `from` in the old
@@ -212,205 +210,172 @@ and the bottom right corner be (1, 1) and your instance is named `shortCtx`,
 shortCtx.resetT().toRect(0, 0, shortCtx.width, shortCtx.height);
 ```
 
-### `ShortvasContext#set(props) -> ShortvasContext`
+### `ShortvasContext#set(props)`
 
 Sets the provided properties on the context. `shortCtx.set(props)` and
 `Object.assign(shortCtx, props)` are essentially equivalent.
 
-### `ShortvasContext#with(props) -> ShortvasContext`
+### `ShortvasContext#with(props)`
 
 Same as `ShortvasContext#set` except that `save` is called just before, meaning
 `with` should be balanced with a call to `restore`.
 
-### `ShortvasContext#block([props, ]f) -> ShortvasContext`
+### `ShortvasContext#block([props, ]f)`
 
 This calls `save`, runs the function `f`, and then calls `restore`. If `props`
 is provided, it will set those properties between `save` and `f`, in a manner
 similar to `ShortvasContext#with`.
 
-### `ShortvasContext#blank(color) -> ShortvasContext`
+### `ShortvasContext#blank(color)`
 
 Wipes the entire canvas by temporarily resetting the transform and filling
 the rectangle spanning the whole canvas with the given color. `color` can be
 any value accepted by `Shortvas.color`.
 
-### `ShortvasContext#clear() -> ShortvasContext`
+### `ShortvasContext#clear()`
 
 Clears the entire canvas by temporarily resetting the transform and calling
 `clearRect` on the whole canvas area. This turns the canvas transparent, unlike
 `blank`.
 
-### `ShortvasContext#beginPath() -> ShortvasPath`
+### `ShortvasContext#beginPath()`
 
 _Aliases: `bp`_
 
-Calls `Context#beginPath` and returns a `ShortvasPath` instance.
+Calls `Context#beginPath` and resets the internal position state used by the
+relative vertex methods.
 
-## `ShortvasPath`
-
-``` js
-var Shortvas = require("shortvas");
-var canvas = document.createElement("canvas");
-var shortCtx = Shortvas.get(canvas);
-var path = shortCtx.bp(); // ShortvasPath instance
-```
-
-A `ShortvasPath` instance exposes a number of convenient methods for building
-paths. Many of the vertex method names are inspired by the
-[notation for the SVG d attribute](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d).
-The instances also contain convenient methods for finishing paths with strokes,
-fills, or both.
-
-Note that the full capabilities of the SVG d attribute are not in the current
-version. For example, `T`, `S`, and `A` are missing.
-
-Unlike `ShortvasContext`, `ShortvasPath` does not expose all the usual canvas context
-methods and properties, so make sure you understand when `ShortvasContext`
-methods are being called and when `ShortvasPath` methods are called. In a
-method chain, you pass from context to path with the `beginPath` (or `bp`)
-context method, and you pass from path to context with the path methods
-`stroke`, `fill`, or `clip`.
-
-All vertex methods will automatically flatten one level of array nesting in
-their passed arguments. This means that the following lines are equivalent:
-``` js
-path.Q(1, 2, 3, 4);
-path.Q([1, 2], [3, 4]);
-path.Q([1, 2, 3, 4]);
-path.Q([1, 2], 3, 4);
-path.Q(1, [2, 3], 4);
-```
-
-Since it is not in all browsers yet, `Path2D` support is not provided.
-
-### `ShortvasPath#moveTo(x, y) -> ShortvasPath`
+### `ShortvasContext#moveTo(x, y)`
 
 _Aliases: `M`_
 
-Equivalent of `Context#moveTo`.
+Equivalent of `Context#moveTo`. This method, along with all vertex methods
+below, supports passing in an array or array-like object in the arguments.
+The rule is that Shortvas will flatten the passed arguments down one level
+before forwarding to the underlying context while leaving nonarrays untouched.
 
-### `ShortvasPath#m(dx, dy) -> ShortvasPath`
+### `ShortvasContext#m(dx, dy)`
 
 Relative version of `Context#moveTo`, moving to `x + dx, y + dy` where `x, y` are
 the coordinates of the last path vertex (default 0, 0).
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
-### `ShortvasPath#lineTo(x, y) -> ShortvasPath`
+### `ShortvasContext#lineTo(x, y)`
 
 _Aliases: `L`_
 
 Equivalent of `Context#lineTo`.
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
-### `ShortvasPath#l(dx, dy) -> ShortvasPath`
+### `ShortvasContext#l(dx, dy)`
 
 Relative version of `Context#lineTo`, drawing a line to `x + dx, y + dy` where
 `x, y` are the coordinates of the last path vertex (default 0, 0).
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
-### `ShortvasPath#H(x) -> ShortvasPath`
+### `ShortvasContext#H(x)`
 
-Same as `ShortvasPath#lineTo`, except that the `y`-coordinate is set to the
+Same as `ShortvasContext#lineTo`, except that the `y`-coordinate is set to the
 value it had for the last vertex, meaning this command draws a horizontal line.
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
-### `ShortvasPath#h(dx) -> ShortvasPath`
+### `ShortvasContext#h(dx)`
 
-Relative version of `ShortvasPath#H`, drawing a line to `x + dx, y` where
+Relative version of `ShortvasContext#H`, drawing a line to `x + dx, y` where
 `x, y` are the coordinates of the last path vertex (default 0, 0).
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
-### `ShortvasPath#V(y) -> ShortvasPath`
+### `ShortvasContext#V(y)`
 
-Same as `ShortvasPath#lineTo`, except that the `x`-coordinate is set to the
+Same as `ShortvasContext#lineTo`, except that the `x`-coordinate is set to the
 value it had for the last vertex, meaning this command draws a vertical line.
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
-### `ShortvasPath#v(dy) -> ShortvasPath`
+### `ShortvasContext#v(dy)`
 
-Relative version of `ShortvasPath#V`, drawing a line to `x, y + dy` where
+Relative version of `ShortvasContext#V`, drawing a line to `x, y + dy` where
 `x, y` are the coordinates of the last path vertex (default 0, 0).
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
-### `ShortvasPath#quadraticCurveTo(cpx, cpy, x, y) -> ShortvasPath`
+### `ShortvasContext#quadraticCurveTo(cpx, cpy, x, y)`
 
 _Aliases: `Q`_
 
 Equivalent of `Context#quadraticCurveTo`.
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
-### `ShortvasPath#q(dcpx, dcpy, dx, dy) -> ShortvasPath`
+### `ShortvasContext#q(dcpx, dcpy, dx, dy)`
 
-Relative version of `ShortvasPath#quadraticCurveto`, drawing a quadratic curve
+Relative version of `ShortvasContext#quadraticCurveto`, drawing a quadratic curve
 to `x + dcpx, y + dcpy, x + dx, y + dy` where `x, y` are the coordinates of the
 last path vertex (default 0, 0).
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
-### `ShortvasPath#bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y) -> ShortvasPath`
+### `ShortvasContext#bezierCurveTo(cp1x, cp1y, cp2x, cp2y, x, y)`
 
 _Aliases: `C`_
 
 Equivalent of `Context#bezierCurveTo`.
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
 Unlike SVG, Shortvas does not yet support more than six arguments.
 
-### `ShortvasPath#c(dcp1x, dcp1y, dcp2x, dcp2y, dx, dy) -> ShortvasPath`
+### `ShortvasContext#c(dcp1x, dcp1y, dcp2x, dcp2y, dx, dy)`
 
-Relative version of `ShortvasPath#bezierCurveto`, drawing a bezier curve to
+Relative version of `ShortvasContext#bezierCurveto`, drawing a bezier curve to
 `x + dcp1x, y + dcp1y, x + dcp2x, y + dcp2y, x + dx, y + dy`
 where `x, y` are the coordinates of the last path vertex (default 0, 0).
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
-### `ShortvasPath#rect(x, y, width, height) -> ShortvasPath`
+### `ShortvasContext#rect(x, y, width, height)`
 
 Equivalent of `Context#rect`.
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
-### `ShortvasPath#arc(x, y, radius, startAngle, endAngle, anticlockwise) -> ShortvasPath`
+### `ShortvasContext#arc(x, y, radius, startAngle, endAngle, anticlockwise)`
 
 Equivalent of `Context#arc`.
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
 Note that SVG's `A` does not match this method. `A` is a planned but not
 currently implemented method.
 
-### `ShortvasPath#arcTo(cp1x, cp1y, cp2x, cp2y, r) -> ShortvasPath`
+### `ShortvasContext#arcTo(cp1x, cp1y, cp2x, cp2y, r)`
 
 Equivalent of `Context#arcTo`.
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
 Note that significant computation is needed to ensure this method plugs into
 relative methods like `l` correctly, which may be a performance liability.
 
-### `ShortvasPath#closePath() -> ShortvasPath`
+### `ShortvasContext#closePath()`
 
 _Aliases: `Z`, `z`_
 
 Equivalent of `Context#closePath()`.
+Supports arrays (see [moveTo](#shortvascontextmovetox-y)).
 
 This will not adjust the current `x, y` position, instead expecting the next
 method call (if any) to have absolute coordinates. This may change in the
 future.
 
-### `ShortvasPath#stroke(strokeStyle, lineWidth) -> ShortvasContext`
+### `ShortvasContext#stroke(strokeStyle, lineWidth)`
 
 Finishes the current path by setting `strokeStyle` and `lineWidth` to the given
 values, then calling `Context#stroke`. Missing arguments (`null` or `undefined`)
 mean those context properties are left untouched.
 
-### `ShortvasPath#fill(fillStyle, fillRule) -> ShortvasContext`
+### `ShortvasContext#fill(fillStyle, fillRule)`
 
 Finishes the current path by setting `fillStyle` to the given value, then
 calling `Context#fill` with the provided `fillRule`. Missing arguments (`null`
 or `undefined`) mean those context properties are left untouched, or in the
 case of `fillRule` the default `"nonzero"` will be used.
 
-### `ShortvasPath#clip(fillRule) -> ShortvasContext`
+### `ShortvasContext#clip(fillRule)`
 
 Finishes the current path by calling `Context#clip` with the provided
 `fillRule`, which defaults to `"nonzero"`.
-
-### `ShortvasPath#strokeAnd(strokeStyle, lineWidth) -> ShortvasPath`
-
-Identical to `ShortvasPath#stroke` except the ShortvasPath is returned, in case
-you want to do multiple operations on the path.
-
-### `ShortvasPath#fillAnd(fillStyle, fillRule) -> ShortvasPath`
-
-Identical to `ShortvasPath#fill` except the ShortvasPath is returned, in case
-you want to do multiple operations on the path.
-
-### `ShortvasPath#clipAnd(fillRule) -> ShortvasPath`
-
-Identical to `ShortvasPath#clip` except the ShortvasPath is returned, in case
-you want to do multiple operations on the path.
 
 # Wishlist
 
