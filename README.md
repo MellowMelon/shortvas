@@ -367,11 +367,15 @@ future.
 
 ### `ShortvasContext#stroke(strokeStyle, lineWidth)`
 
+_Aliases: `strokeAnd`_
+
 Finishes the current path by setting `strokeStyle` and `lineWidth` to the given
 values, then calling `Context#stroke`. Missing arguments (`null` or `undefined`)
 mean those context properties are left untouched.
 
 ### `ShortvasContext#fill(fillStyle, fillRule)`
+
+_Aliases: `fillAnd`_
 
 Finishes the current path by setting `fillStyle` to the given value, then
 calling `Context#fill` with the provided `fillRule`. Missing arguments (`null`
@@ -379,6 +383,8 @@ or `undefined`) mean those context properties are left untouched, or in the
 case of `fillRule` the default `"nonzero"` will be used.
 
 ### `ShortvasContext#clip(fillRule)`
+
+_Aliases: `clipAnd`_
 
 Finishes the current path by calling `Context#clip` with the provided
 `fillRule`, which defaults to `"nonzero"`.
