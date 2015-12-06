@@ -122,6 +122,12 @@ All `ShortvasContext` methods that would ordinarily not return anything instead
 return the called `ShortvasContext` so that chaining is possible. This includes
 both inherited context methods and the new methods documented below.
 
+`ShortvasContext` aliases many vertex methods with names consistent with the
+[notation for the SVG d attribute](https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d).
+However, note that compatibility is not 100%. `S`, `T`, and `A` are not
+implemented, `C` cannot accept more than six arguments, and the behavior of
+the relative vertex methods may not be totally consistent.
+
 ### Inherited Canvas Properties and Methods
 
 As mentioned above, `ShortvasContext` implements all of the usual properties
