@@ -64,7 +64,7 @@ longhand.restore();
 shorthand.sv()
   .toRect([40, 20, 40, 40]).bp()
   .M(0.5, 0).L(0, 0.5).L(0.5, 1).L(1, 0.5).Z()
-  .fillAnd(0x0000FF).stroke(0x00FF00, 0.1)
+  .fill(0x0000FF).stroke(0x00FF00, 0.1)
 .rs();
 ```
 
