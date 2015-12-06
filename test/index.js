@@ -13,9 +13,6 @@ describe("Shortvas", function () {
   beforeEach(function () {
     var sCtxProto = require("../lib/context.js").prototype;
     delete sCtxProto.newMethod;
-
-    var sPathProto = require("../lib/path.js").prototype;
-    delete sPathProto.newMethod;
   });
 
   it("should implement get", function () {
@@ -53,17 +50,5 @@ describe("Shortvas", function () {
     var backingCtx = BaseFormat.getStub();
     var shortCtx = Shortvas.get(backingCtx);
     expect(shortCtx.newMethod).to.exist;
-    expect(shortCtx.bp().newMethod).to.not.exist;
-  });
-
-  it("should implement extendPath", function () {
-    Shortvas.extendPath({
-      newMethod: function () {},
-    });
-
-    var backingCtx = BaseFormat.getStub();
-    var shortCtx = Shortvas.get(backingCtx);
-    expect(shortCtx.newMethod).to.not.exist;
-    expect(shortCtx.bp().newMethod).to.exist;
   });
 });

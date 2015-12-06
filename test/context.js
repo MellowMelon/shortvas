@@ -240,12 +240,6 @@ describe("ShortvasContext", function () {
     ]);
   });
 
-  it("should return a ShortvasPath instance from beginPath", function () {
-    var ret = shortCtx.beginPath();
-    expect(ret.M, "has M").to.exist;
-    expect(ret.strokeAnd, "has strokeAnd").to.exist;
-  });
-
   it("should alias bp to beginPath", function () {
     expect(shortCtx.bp, "bp").to.equal(shortCtx.beginPath);
   });
