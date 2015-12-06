@@ -334,5 +334,11 @@ describe("ShortvasContext path methods", function () {
         {key: "clip", arguments: []},
       ]);
     });
+
+    it("should alias stroke, fill, and clip with And at the end", function () {
+      expect(shortCtx.strokeAnd).to.equal(shortCtx.stroke);
+      expect(shortCtx.fillAnd).to.equal(shortCtx.fill);
+      expect(shortCtx.clipAnd).to.equal(shortCtx.clip);
+    });
   });
 });
