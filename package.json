@@ -11,6 +11,9 @@
     "shorthand",
     "wrapper"
   ],
+  "dependencies": {
+    "canvas-transform": "^1.0.0"
+  },
   "devDependencies": {
     "chai": "^3.4.1",
     "eslint": "^1.10.2",
