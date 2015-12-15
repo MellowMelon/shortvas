@@ -144,6 +144,8 @@ and what was implemented in Chrome 46.0.2490.80.
 - Properties: `canvas`, `globalAlpha`, `globalCompositeOperation`, `strokeStyle`, `fillStyle`, `shadowOffsetX`, `shadowOffsetY`, `shadowBlur`, `shadowColor`, `lineWidth`, `lineCap`, `lineJoin`, `miterLimit`, `lineDashOffset`, `font`, `textAlign`, `textBaseline`
 - Methods: `save`, `restore`, `scale`, `rotate`, `translate`, `transform`, `setTransform`, `resetTransform`, `createLinearGradient`, `createRadialGradient`, `createPattern`, `clearRect`, `fillRect`, `strokeRect`, `beginPath`, `fill`, `stroke`, `drawFocusIfNeeded`, `clip`, `isPointInPath`, `isPointInStroke`, `fillText`, `strokeText`, `measureText`, `drawImage`, `createImageData`, `getImageData`, `putImageData`, `getContextAttributes`, `setLineDash`, `getLineDash`, `closePath`, `moveTo`, `lineTo`, `quadraticCurveTo`, `bezierCurveTo`, `arcTo`, `rect`, `arc`
 
+`resetTransform` will be implemented via `setTransform` if it is not native.
+
 In addition to several documented below, the following aliases of existing
 canvas properties and methods exist on `ShortvasContext`:
 - `save`: `push`, `sv`
