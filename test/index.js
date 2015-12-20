@@ -38,6 +38,16 @@ describe("Shortvas", function () {
     expect(shortCtxBase).to.not.equal(shortCtxOther);
   });
 
+  it("should implement a noCache option for get", function () {
+    var backingCtx = BaseFormat.getStub();
+
+    var shortCtx1 = Shortvas.get(backingCtx);
+    var shortCtx2 = Shortvas.get(backingCtx, {noCache: true});
+    var shortCtx3 = Shortvas.get(backingCtx);
+    expect(shortCtx2).to.not.equal(shortCtx1);
+    expect(shortCtx2).to.equal(shortCtx3);
+  });
+
   it("should implement color", function () {
     expect(Shortvas.color).to.be.a("function");
     expect(Shortvas.color).to.equal(Utils.convertColor);
