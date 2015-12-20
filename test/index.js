@@ -4,6 +4,7 @@
 var expect = require("chai").expect;
 
 var Shortvas = require("../index.js");
+var ShortvasContext = require("../lib/context.js");
 var Utils = require("../lib/utils.js");
 var BaseFormat = require("../lib/base_format.js");
 
@@ -11,7 +12,7 @@ describe("Shortvas", function () {
   // Reset prototypes that may have been modified during tests. Admittedly a
   // brittle approach.
   beforeEach(function () {
-    var sCtxProto = require("../lib/context.js").prototype;
+    var sCtxProto = ShortvasContext.prototype;
     delete sCtxProto.newMethod;
   });
 
