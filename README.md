@@ -76,10 +76,14 @@ shorthand.sv()
 var Shortvas = require("shortvas");
 ```
 
-### `Shortvas.get(canvas|context) -> ShortvasContext`
+### `Shortvas.get(canvas|context, [options]) -> ShortvasContext`
 
 Returns a `ShortvasContext` instance, a wrapper around either the given context
 or around the 2D context of the given canvas element.
+
+Available options are `noCache`, which if true will skip the cached
+`ShortvasContext` attached to the canvas and make a new one. See
+[ShortvasContext](#shortvascontext) for details.
 
 ### `Shortvas.color(color) -> String`
 

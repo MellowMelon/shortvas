@@ -1,10 +1,11 @@
 var ShortvasContext = require("./lib/context.js");
 var convertColor = require("./lib/utils.js").convertColor;
 
-exports.get = function (context) {
+exports.get = function (context, options) {
   if (!context || typeof context !== "object") {
     throw new Error("Shortvas.get: must pass Canvas or Context object.");
   }
+  options = options || {};
 
   // Juggle arguments until we have context and canvas.
   if (context.getContext) {
@@ -13,7 +14,7 @@ exports.get = function (context) {
   var canvas = context.canvas;
 
   // Check for a cached instance.
-  if (canvas.__shortvas__) {
+  if (canvas.__shortvas__ && !options.noCache) {
     return canvas.__shortvas__;
   }
 
