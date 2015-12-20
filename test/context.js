@@ -117,6 +117,18 @@ describe("ShortvasContext", function () {
     ]);
   });
 
+  it("should have getTransform see calls to resetTransform", function () {
+    var stub2 = BaseFormat.getStub();
+    delete stub2.resetTransform;
+    var backingCtx2 = Tracker.track(stub2);
+    var shortCtx2 = Shortvas.get(backingCtx2);
+
+    shortCtx2.scale(2, 2);
+    expect(shortCtx2.getTransform()).to.not.deep.equal([1, 0, 0, 1, 0, 0]);
+    shortCtx2.resetTransform();
+    expect(shortCtx2.getTransform()).to.deep.equal([1, 0, 0, 1, 0, 0]);
+  });
+
   it("should forward transforms and track them via getTransform", function () {
     shortCtx.translate(1, 2).scale(2, 2).translate(3, 4);
     expect(shortCtx.getTransform()).to.deep.equal([2, 0, 0, 2, 7, 10]);
