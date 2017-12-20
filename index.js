@@ -10,6 +10,10 @@ exports.get = function (context, options) {
   // Juggle arguments until we have context and canvas.
   if (context.getContext) {
     context = context.getContext("2d");
+    if (!context) {
+      throw new Error("Shortvas.get: Calling getContext(\"2d\") " +
+        "on passed canvas returned " + context);
+    }
   }
   var canvas = context.canvas;
 
