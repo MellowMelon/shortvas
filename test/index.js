@@ -16,13 +16,35 @@ describe("Shortvas", function () {
     delete sCtxProto.newMethod;
   });
 
-  it("should implement get", function () {
+  it("should implement get for passing a context", function () {
     var backingCtx = BaseFormat.getStub();
     var shortCtx = Shortvas.get(backingCtx);
     // Duck-type to verify
     expect(shortCtx.lineWidth, "has lineWidth").to.exist;
     expect(shortCtx.beginPath, "has beginPath").to.exist;
     expect(shortCtx.getTransform, "has getTransform").to.exist;
+  });
+
+  it("should implement get for passing a canvas", function () {
+    var backingCtx = BaseFormat.getStub();
+    var shortCtx = Shortvas.get(backingCtx.canvas);
+    // Duck-type to verify
+    expect(shortCtx.lineWidth, "has lineWidth").to.exist;
+    expect(shortCtx.beginPath, "has beginPath").to.exist;
+    expect(shortCtx.getTransform, "has getTransform").to.exist;
+  });
+
+  it("should throw an appropriate error when getContext fails", function () {
+    var backingCtx = BaseFormat.getStub();
+    backingCtx.canvas.getContext = function () {
+      return null;
+    };
+    var callShortvasGet = function () {
+      return Shortvas.get(backingCtx.canvas);
+    };
+    var msg = "Shortvas.get: Calling getContext(\"2d\") " +
+      "on passed canvas returned null";
+    expect(callShortvasGet).to.throw(Error, msg);
   });
 
   it("should implement canvas-level caching for get", function () {
