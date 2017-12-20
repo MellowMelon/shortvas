@@ -1,3 +1,14 @@
+# 0.3.1
+
+If `getContext("2d")` returns a falsy value, Shortvas.get throws a helpful
+error.
+
+# 0.3.0
+
+Added `noCache` option to Shortvas.get.
+
+Shortvas now polyfills `resetTransform` based on `setTransform`.
+
 # 0.2.1
 
 Restored `strokeAnd`, `fillAnd`, and `clipAnd` as aliases.
