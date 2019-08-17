@@ -31,7 +31,7 @@ exports.color = convertColor;
 
 exports.extend = function (methods) {
   for (var k in methods) {
-    if (methods.hasOwnProperty(k)) {
+    if (Object.prototype.hasOwnProperty.call(methods, k)) {
       if (typeof methods[k] === "function") {
         ShortvasContext.prototype[k] = methods[k];
       }
